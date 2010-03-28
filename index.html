@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>Weee</title>
+<script type="text/javascript">
+
+window.onload = function() {
+    /* Add to the thingy that looks for new chat boxes */
+
+    /* Look for all new chat boxes */
+    document.getElementById("chatbox").addEventListener('DOMSubtreeModified', function(e) {
+        var me = e.target.getElementsByClassName('a').length;
+        var you = e.target.getElementsByClassName('b').length; 
+
+        document.getElementById("count").innerHTML = me + ":" + you;
+        document.getElementById("myratio").style.width = (100*me/(me + you)) + 'px';
+    });
+
+};
+
+function chat(is_me) {
+    if(is_me) { 
+        document.getElementById("chatbox").innerHTML += '<div class="a">no</div>';
+    } else {
+        document.getElementById("chatbox").innerHTML += '<div class="b">yes</div>';
+    }
+};
+
+</script>
+</head>
+<body>
+    wee
+
+<div class="ratio">
+    <div class="ratio_me" id="myratio">&nbsp;</div>
+    <div class="overlay" id="count">100% ME</div>
+</div>
+<div id="chatbox" >
+    <div class="a">me</div>
+    <div class="b">you</div> 
+</div>
+<button onclick="chat(true)">chat me</button>
+<button onclick="chat(false)">chat false</button>
+
+</body>
+</html>
