@@ -3,11 +3,10 @@
     "version": "1.0",
     "description": "Don't look desparate when making conversation",
     "content_scripts": [{
-        "matches": ["http://*/*", "https://*/*"],
+        "matches": ["https://mail.google.com/*"],
         "js": ["myscript.js"]
     }],
     "permissions": [
-        "http://*/*",
-        "https://*/*"
+        "https://mail.google.com/*"
     ]
 }
