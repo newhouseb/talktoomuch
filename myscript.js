@@ -1,4 +1,5 @@
 
+/* Listens on the document for the chat system to initialize */
 function GChatSystemWaiter() {
     var dwContainer = null;
     var noContainer = null; 
@@ -36,26 +37,16 @@ function GChatSystemWaiter() {
     };
 }
 
+/* Listens on a specific window for updates */
 function GChatWindowWaiter(target) {
     var me = 0;
     var you = 0;
     var name = undefined;
 
-    /* TODO: Make this work */
-    var past_kl = target.getElementsByClassName('kl');
-    for(var i = 0; i < past_kl.length; i++) {
-        if(past_kl[i].parentNode.getAttribute("chat-dir") == 't') you++;
-        if(past_kl[i].parentNode.getAttribute("chat-dir") == 'f') me++;
-    }
-    var past_km = target.getElementsByClassName('km');
-    for(var i = 0; i < past_km.length; i++) {
-        if(past_km[i].getAttribute("chat-dir") == 't') you++;
-        if(past_km[i].getAttribute("chat-dir") == 'f') me++;
-    }
-    //alert(past_kl.length + "," + past_km.length);
-    /* ENDTODO */
-     
+    /* Watch for new chat lines */
     target.addEventListener('DOMNodeInserted', function(g) {
+        /* One of these is when the speaker changes ie. a name is printed, 
+           another is when the speaker remains the same */
         if (g.target.className == 'kl') {
             if(g.target.parentNode.getAttribute("chat-dir") == 't') you++;
             if(g.target.parentNode.getAttribute("chat-dir") == 'f') me++;
@@ -65,12 +56,31 @@ function GChatWindowWaiter(target) {
         }
     });
 
+    /*Each chat insert tends to reset our customized name, so we need to
+      display our extra data only after the tree has been completely modified*/
     target.addEventListener('DOMSubtreeModified', function(g) {
+        /* Wait for the box to finish initializing */
         if(name == undefined
             & target.getElementsByClassName('Hp')[0].innerHTML != "&nbsp;"
             & target.getElementsByClassName('Hp')[0].innerHTML != "...") {
+
+            /* Get the original title/name because we're overwriting it/adding
+               to it our extra metrics */
             name = target.getElementsByClassName('Hp')[0].innerHTML;
+
+            /* Count up pre-existing chat lines */
+            var past_kl = target.getElementsByClassName('kl');
+            for(var i = 0; i < past_kl.length; i++) {
+                if(past_kl[i].parentNode.getAttribute("chat-dir") == 't') you++;
+                if(past_kl[i].parentNode.getAttribute("chat-dir") == 'f') me++;
+            }
+            var past_km = target.getElementsByClassName('km');
+            for(var i = 0; i < past_km.length; i++) {
+                if(past_km[i].getAttribute("chat-dir") == 't') you++;
+                if(past_km[i].getAttribute("chat-dir") == 'f') me++;
+            }
         } else if (name != undefined) {
+            /* Redraw the stats back in */
             if((me + you) > 0)
                 target.getElementsByClassName('Hp')[0].innerHTML = name + " " + 
                     Math.round(100*me/(me + you)) + "% is you talking";
